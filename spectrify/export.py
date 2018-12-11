@@ -26,10 +26,12 @@ class RedshiftDataExporter:
 
         with self.sa_engine.connect() as cursor:
             click.echo('Exporting table to CSV...')
-            cursor.execute(query, {
+            sql = (query % {
                 's3_path': s3_path,
                 'credentials': creds_str,
             })
+            print("Export query is:\n{}".format(sql))
+            cursor.execute(sql)
             click.echo('Done.')
 
     def get_query(self, table_name):
