@@ -59,6 +59,7 @@ class TableCreator(object):
         with self.engine.connect() as cursor:
             cursor.execution_options(isolation_level='AUTOCOMMIT')
             self.log('Creating table...')
+            print("Create table or add partition query is:\n{}".format(self.query))
             cursor.execute(self.query)
             self.log('Done.')
 
