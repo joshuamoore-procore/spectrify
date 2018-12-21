@@ -38,9 +38,12 @@ class RedshiftDataExporter:
         return self.UNLOAD_QUERY.format(table_name)
 
     def get_credentials(self):
-        session = boto3.Session()
-        credentials = session.get_credentials()
-        return 'aws_access_key_id={};aws_secret_access_key={}'.format(
-            credentials.access_key,
-            credentials.secret_key,
-        )
+        if self.iam_role:
+            return 'aws_iam_role={}'.format(self.iam_role)
+        else:
+            session = boto3.Session()
+            credentials = session.get_credentials()
+            return 'aws_access_key_id={};aws_secret_access_key={}'.format(
+                credentials.access_key,
+                credentials.secret_key,
+            )

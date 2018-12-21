@@ -94,8 +94,8 @@ class CsvConverter:
         filename, ext = path.splitext(path.basename(file_path))
         out_dir = self.s3_config.get_spectrum_dir()
         out_path = path.join(out_dir, filename)
-        if not out_path.endswith('.parq'):
-            out_path += '.parq'
+        if not out_path.endswith('.parquet'):
+            out_path += '.parquet'
 
         self.log('Converting file [%s] to [%s]' % (file_path, out_path))
 
