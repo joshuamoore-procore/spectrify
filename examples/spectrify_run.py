@@ -15,6 +15,7 @@ import click
 import sqlalchemy as sa
 import logging
 from logging.handlers import TimedRotatingFileHandler
+import os
 
 # Had to add this line to ensure it was pulling from the modified Spectrify code, rather than the site-packages version.
 sys.path.insert(0, '/Users/joshmoore/Documents/GitHub/procore/spectrify')
@@ -24,7 +25,7 @@ from spectrify.utils.s3 import SimpleS3Config
 from spectrify.create import SpectrumTableCreator
 
 FORMATTER = logging.Formatter("%(asctime)s — %(name)s — %(levelname)s — %(funcName)s:%(lineno)d — %(message)s")
-LOG_FILE = "spectrify_run.log"
+LOG_FILE = "{0}/spectrify_run.log".format(os.path.abspath(os.path.join(os.path.dirname(__file__))))
 
 def get_console_handler():
    console_handler = logging.StreamHandler(sys.stdout)
@@ -245,7 +246,8 @@ def spectrify_run(start
     type=click.File('r'),
     help='''Configuration file in JSON format containing the parameters to pass in. Values are: start, end, 
     source_schema, source_table, timestamp_col, spectrum_schema, spectrum_table, csv_bucket_name, csv_prefix,
-    parquet_bucket_name, parquet_prefix, and iam_role.
+    parquet_bucket_name, parquet_prefix, and iam_role. If csv_prefix or parquet_prefix are null or blank strings,
+    the value for the "env" argument will be used.
     '''
 )
 def main(environment, export_whole_table, params):
@@ -257,7 +259,7 @@ def main(environment, export_whole_table, params):
     if environment == 'local_dev':
         config.read("/users/joshmoore/Documents/AirflowTest2/redshift_config.cfg")
     else:
-        config.read("redshift_config.cfg")
+        config.read("/home/ubuntu/spectrify/{env}/redshift_config.cfg".format(env=environment))
     target_dbname = config.get(section_name, "dbname")
     target_user = config.get(section_name, "user")
     target_password = config.get(section_name, "password")
@@ -320,7 +322,7 @@ def main(environment, export_whole_table, params):
         ))
     except Exception as e:
         fail_time = monotonic()
-        logger.debug("Run for {start} to {end} failed at {fail_time} and took {duration} seconds.\nFailure was:\n {e}".format(
+        logger.error("Run for {start} to {end} failed at {fail_time} and took {duration} seconds.\nFailure was:\n {e}".format(
             start=spectrify_params['start'],
             end=spectrify_params['end'],
             fail_time=datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S.%f'),

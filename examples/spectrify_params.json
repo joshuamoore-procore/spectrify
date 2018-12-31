@@ -1,0 +1,14 @@
+{
+	"start":"2017-07-05 00:00:00"
+	,"end":"2017-07-06 00:00:00"
+	,"source_schema":"procore_analytic_events"
+	,"source_table":"transformed_events"
+	,"timestamp_col":"timestamp"
+	,"spectrum_schema":"analytic_events"
+	,"spectrum_table":"analytic_events_spectrum"
+	,"csv_bucket_name":"procoreit-analytic-events-transformed"
+	,"csv_prefix":""
+	,"parquet_bucket_name":"procoreit-analytic-events-transformed"
+	,"parquet_prefix":""
+	,"iam_role":"arn:aws:iam::525268051151:role/Redshift-Dev"
+}	
